@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Attendance — College Attendance Management</title>
+<style>
+:root{--bg:#eef2f0;--fg:#13201b;--card:#fff;--mut:#5b6a64;--line:#dbe3df;--ac:#0b6b5c;--onac:#fff;--ok:#0f7a45;--bad:#b42318;--warn:#a15c00;--sh:0 1px 2px rgba(16,40,32,.05),0 10px 30px -12px rgba(16,40,32,.18);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c110f;--fg:#e8ebe6;--card:#151c19;--mut:#98a49d;--line:#26312c;--ac:#4fc3ad;--onac:#06231d;--ok:#4cc88a;--bad:#ff8a80;--warn:#f0b35a;--sh:0 10px 30px -12px #000}}
+:root[data-theme="dark"]{--bg:#0c110f;--fg:#e8ebe6;--card:#151c19;--mut:#98a49d;--line:#26312c;--ac:#4fc3ad;--onac:#06231d;--ok:#4cc88a;--bad:#ff8a80;--warn:#f0b35a;--sh:0 10px 30px -12px #000}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px;transition:background .3s,color .3s}
+.w{max-width:1080px;margin:auto}h1{font:600 21px/1.2 Georgia,serif;margin:0;display:flex;align-items:center;gap:10px}h2{font:600 15px system-ui;margin:16px 0 8px}
+.logo{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ac);color:var(--onac);font:700 18px system-ui}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;box-shadow:var(--sh)}
+.sub{color:var(--mut);font-size:13px}
+nav{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:16px;overflow-x:auto;box-shadow:var(--sh)}
+nav button{background:none;border:0;border-radius:999px;padding:8px 14px;color:var(--mut);font:inherit;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
+nav button:hover{color:var(--fg)}nav button.on{background:var(--ac);color:var(--onac);font-weight:600}
+button,select,input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 11px;transition:border-color .15s,transform .1s}
+button{cursor:pointer}button:hover{border-color:var(--ac)}button:active{transform:scale(.97)}button.p{background:var(--ac);color:var(--onac);border-color:var(--ac);font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.f{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px}.f label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:2px}
+.msg{background:var(--card);border:1px solid var(--ac);border-left-width:5px;border-radius:10px;padding:10px 14px;margin-bottom:14px;animation:pop .3s}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap}th{color:var(--mut);font-weight:500;font-size:12px}
+tr:hover td{background:color-mix(in srgb,var(--ac) 6%,transparent)}td.ok,td.bad,td.warn{font-weight:600}
+.ros{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.ch{text-align:left;padding:8px 10px;font-size:13px;border-radius:10px;border-left:5px solid var(--ok);box-shadow:var(--sh)}
+.ch.A{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 13%,var(--card))}
+.ch.E{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 13%,var(--card))}
+.ch.sel{outline:2px solid var(--ac)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:0 0 12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--sh)}
+.stat .num{font:600 28px/1.2 Georgia,serif;margin-top:4px;font-variant-numeric:tabular-nums}.stat .lbl{font-size:12px;color:var(--mut)}
+.badge,.pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:12px;background:var(--line);white-space:nowrap}
+.pill{align-self:center;color:var(--mut)}.pill.online{color:var(--ok)}.pill.offline{color:var(--bad)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.profilehead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:12px;margin-bottom:12px}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+.ringbox{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.ring{width:132px;height:132px;flex:none}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}.ring .bg{stroke:var(--line)}.ring .fg{stroke:var(--ac);animation:ring 1.1s cubic-bezier(.2,.8,.2,1)}
+.ring text{fill:var(--fg);font:600 25px Georgia,serif;text-anchor:middle}
+@keyframes ring{from{stroke-dasharray:0 327}}@keyframes pop{from{opacity:0;transform:translateY(-6px)}}@keyframes grow{from{width:0}}
+.bar{display:grid;grid-template-columns:52px 1fr 48px;align-items:center;gap:10px;font-size:13px;margin:9px 0}
+.bar i{display:block;height:10px;border-radius:6px;background:var(--line);position:relative;overflow:hidden}
+.bar i:after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--ac);border-radius:6px;animation:grow .9s cubic-bezier(.2,.8,.2,1)}
+.bar.low i:after{background:var(--bad)}.bar b{text-align:right;font-variant-numeric:tabular-nums}
+.trend{width:100%;height:110px;display:block}.trend path.a{fill:color-mix(in srgb,var(--ac) 16%,transparent)}.trend path.l{fill:none;stroke:var(--ac);stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.news{list-style:none;margin:0;padding:0}.news li{padding:8px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px;font-size:13px}.news li:last-child{border:0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const KEY='attendance.v1',TODAY=new Date().toISOString().slice(0,10);
+const DEPTS=['CSE','ECE','MECH','CIVIL','MCA'],SUBS=['Maths','Core 1','Core 2','Core 3','Lab'];
+const NF=['Aarav','Diya','Kabir','Meera','Rohan','Ananya','Vikram','Isha','Arjun','Nisha','Karthik','Sneha'],NL=['Rao','Nair','Mehta','Shah','Iyer','Reddy','Das','Khan','Patel','Singh'];
+const pad=(n,w)=>String(n).padStart(w,'0'),nm=i=>NF[i%12]+' '+NL[(i*7+3)%10],roll=i=>'S'+pad(i+1,4);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id).value;
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+// ---- seed: 5 depts x 4 years x 3 sections x 83 students (~5,000), 300 class offerings, 200 faculty ----
+const secs=[],offs=[],SO={},base=new Map();let NS=0;
+(function(){const r=rng(11);let on=0;
+ DEPTS.forEach(d=>{for(let y=1;y<=4;y++)for(const c of 'ABC'){const sec={id:d+'-'+y+c,d,st:NS,n:83};NS+=83;secs.push(sec);SO[sec.id]=[];
+  SUBS.forEach(s=>{const o={id:'O'+(++on),sec,sub:d+' '+s,fid:'F'+pad(on%200+1,3),k:on};offs.push(o);SO[sec.id].push(o)})}});
+ const p=[];for(let i=0;i<NS;i++){const u=r();p.push(.97-.4*u*u*u)}
+ const ds=[],t=new Date(TODAY+'T00:00:00Z');while(ds.length<20){t.setUTCDate(t.getUTCDate()-1);const w=t.getUTCDay();if(w&&w<6)ds.push(t.toISOString().slice(0,10))}
+ offs.forEach(o=>ds.forEach((d,j)=>{if((j+o.k)%2)return;const abs=[];for(let k=0;k<o.sec.n;k++)if(r()>p[o.sec.st+k])abs.push(o.sec.st+k);base.set(o.id+'|'+d,{o:o.id,d,abs,exc:[],by:o.fid})}))})();
+// ---- state (only changes are persisted; seed is regenerated deterministically) ----
+let S={sess:{},reqs:[],audit:[],th:75,n:0};try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+let U={role:'Faculty',fid:'F001',dept:'CSE'},tab='dash',oid='O1',msg='',draft=null,openKey='',pick=-1,fd='',q='',sel=-1;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}pushState()};
+const who=()=>U.role==='Faculty'?U.fid:U.role==='HOD'?'HOD-'+U.dept:'Admin';
+const log=(a,d)=>S.audit.unshift({ts:new Date().toISOString().slice(0,16).replace('T',' '),who:who(),a,d});
+const getS=k=>S.sess[k]||base.get(k);
+const allS=()=>{const m=new Map(base);for(const k in S.sess)m.set(k,S.sess[k]);return m};
+const stOf=(s,i)=>s.abs.includes(i)?'A':s.exc.includes(i)?'E':'P';
+const offOf=id=>offs.find(o=>o.id===id),mine=()=>offs.filter(o=>o.fid===U.fid);
+const sc=()=>U.role==='HOD'?U.dept:fd;
+function stats(){const T={},A={};for(const s of allS().values()){T[s.o]=(T[s.o]||0)+1;const a=A[s.o]||(A[s.o]={});s.abs.forEach(i=>a[i]=(a[i]||0)+1)}return{T,A}}
+function low(){const{T,A}=stats(),th=S.th/100,out=[];
+ secs.forEach(sec=>{if(sc()&&sec.d!==sc())return;const os=SO[sec.id];let tt=0;os.forEach(o=>tt+=T[o.id]||0);if(!tt)return;
+  for(let k=0;k<sec.n;k++){const i=sec.st+k;let att=0,w=[9,''];os.forEach(o=>{const t=T[o.id]||0,a=t-((A[o.id]||{})[i]||0);att+=a;if(t&&a/t<w[0])w=[a/t,o.sub]});
+   const r=att/tt;if(r<th)out.push({i,sec:sec.id,r,w,need:Math.ceil((th*tt-att)/(1-th))})}});return out.sort((a,b)=>a.r-b.r)}
+// ---- commands ----
+function deny(a){msg='Not allowed for '+U.role+': '+a;log('DENIED',a)}
+function saveMark(){if(U.role!=='Faculty')return deny('mark attendance');const o=offOf(oid);if(o.fid!==U.fid)return deny('mark a class you do not teach');
+ const k=oid+'|'+TODAY,ex=getS(k);S.sess[k]={o:oid,d:TODAY,abs:[...draft.abs],exc:[...draft.exc],by:U.fid};
+ log(ex?'EDIT_SAME_DAY':'MARK',o.sub+' '+o.sec.id+': '+draft.abs.size+' absent, '+draft.exc.size+' excused');msg='Attendance saved for '+o.sub+' ('+o.sec.id+'), today.';draft=null;pushState(true)}
+function reqCorr(){const s=getS(openKey),to=$('to'),why=$('why').trim();if(U.role!=='Faculty')return deny('request corrections');
+ if(offOf(s.o).fid!==U.fid)return deny('correct a class you do not teach');
+ if(!why){msg='Give a reason for the correction.';return}if(stOf(s,pick)===to){msg='That is already the recorded status.';return}
+ if(S.reqs.some(r=>r.key===openKey&&r.i===pick&&r.status==='PENDING')){msg='A request for this student and class is already pending.';return}
+ S.reqs.push({id:++S.n,key:openKey,o:s.o,i:pick,from:stOf(s,pick),to,reason:why,by:U.fid,status:'PENDING',ts:new Date().toISOString().slice(0,16).replace('T',' ')});
+ log('REQUEST',roll(pick)+' '+stOf(s,pick)+'→'+to+' on '+s.d+': '+why);msg='Correction sent to the HOD for approval.';pick=-1}
+function decide(id,ok){if(U.role==='Faculty')return deny('approve corrections');const r=S.reqs.find(x=>x.id===id),o=offOf(r.o),note=$('dn').trim();
+ if(U.role==='HOD'&&o.sec.d!==U.dept)return deny('decide for another department');
+ if(!ok&&!note){msg='Add a note when rejecting.';return}
+ const s=getS(r.key);r.dec=who();r.note=note;
+ if(ok&&stOf(s,r.i)!==r.from){r.status='REJECTED';r.note='Stale: record changed since the request.';msg='Record has changed since the request; auto-rejected.'}
+ else if(ok){const c={...s,abs:s.abs.filter(x=>x!==r.i),exc:s.exc.filter(x=>x!==r.i)};if(r.to==='A')c.abs.push(r.i);if(r.to==='E')c.exc.push(r.i);S.sess[r.key]=c;r.status='APPROVED';msg='Approved and applied.'}
+ else{r.status='REJECTED';msg='Rejected.'}log(r.status,'#'+r.id+' '+roll(r.i)+' '+r.from+'→'+r.to+(note?' ('+note+')':''))}
+function csv(){const rows=[['Roll','Name','Section','Overall %','Weakest subject','Classes to recover']].concat(low().map(x=>[roll(x.i),nm(x.i),x.sec,(x.r*100).toFixed(1),x.w[1],x.need]));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.join('\n').replace(/,/g,',')],{type:'text/csv'}));a.download='low-attendance.csv';a.click()}
+const act=(f,...a)=>{msg='';f(...a);save();R()};
+
+function attendancePctForSession(s){
+  const total=offOf(s.o).sec.n;
+  return total ? ((total-s.abs.length)/total*100) : 0;
+}
+function dashboardStats(){
+  const sessions=[...allS().values()];
+  const today=sessions.filter(s=>s.d===TODAY);
+  const totalStudents=NS;
+  const totalClasses=offs.length;
+  const pending=S.reqs.filter(r=>r.status==='PENDING').length;
+  const lowCount=low().length;
+  let present=0,total=0;
+  today.forEach(s=>{total+=offOf(s.o).sec.n;present+=offOf(s.o).sec.n-s.abs.length});
+  return {totalStudents,totalClasses,pending,lowCount,todayPct:total?present/total*100:0};
+}
+function vDash(){
+  const x=dashboardStats(),by={},dp={};
+  for(const s of allS().values()){const o=offOf(s.o),n=o.sec.n,p=n-s.abs.length,b=by[s.d]||(by[s.d]=[0,0]),d=dp[o.sec.d]||(dp[o.sec.d]=[0,0]);b[0]+=p;b[1]+=n;d[0]+=p;d[1]+=n}
+  const ds=Object.keys(by).sort(),last=ds[ds.length-1],lp=last?by[last][0]/by[last][1]*100:0;
+  const tr=ds.slice(-14).map(d=>by[d][0]/by[d][1]*100),lo=Math.min(...tr)-2,hi=Math.max(...tr)+2;
+  const pts=tr.map((v,i)=>[(i*300/(tr.length-1)).toFixed(1),(96-(v-lo)/(hi-lo)*92).toFixed(1)]);
+  const ln='M'+pts.map(p=>p.join(' ')).join('L');
+  const recent=[...allS().values()].filter(s=>s.d===last).slice(0,8);
+  const rows=recent.map(s=>{const o=offOf(s.o),p=attendancePctForSession(s);
+    return `<tr><td>${s.d}</td><td>${o.sub}</td><td>${o.sec.id}</td><td>${s.abs.length}</td><td>${s.exc.length}</td><td class="${p<S.th?'bad':'ok'}">${p.toFixed(1)}%</td></tr>`}).join('');
+  const bars=DEPTS.filter(d=>dp[d]).map(d=>{const p=dp[d][0]/dp[d][1]*100;return `<div class="bar ${p<S.th?'low':''}"><span>${d}</span><i style="--w:${p}%"></i><b>${p.toFixed(1)}%</b></div>`}).join('');
+  return `<div class="statgrid">
+      <div class="stat"><div class="lbl">Total students</div><div class="num" data-n="${x.totalStudents}">${x.totalStudents.toLocaleString()}</div></div>
+      <div class="stat"><div class="lbl">Class offerings</div><div class="num" data-n="${x.totalClasses}">${x.totalClasses}</div></div>
+      <div class="stat"><div class="lbl">Below ${S.th}% overall</div><div class="num bad" data-n="${x.lowCount}">${x.lowCount}</div></div>
+      <div class="stat"><div class="lbl">Pending corrections</div><div class="num warn" data-n="${x.pending}">${x.pending}</div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><h2 style="margin-top:0">${last===TODAY?'Today':'Latest day'}${last?' · '+last:''}</h2><div class="ringbox">
+        <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="Attendance ${lp.toFixed(1)} percent"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="stroke-dasharray:${(lp/100*326.7).toFixed(1)} 327"/><text x="60" y="68">${lp.toFixed(1)}%</text></svg>
+        <div class="sub" style="flex:1;min-width:140px">Students present across all sessions held that day. ${lp<S.th?'<b class="bad">Below the '+S.th+'% threshold.</b>':'<b class="ok">Above the '+S.th+'% threshold.</b>'}</div></div></div>
+      <div class="card"><h2 style="margin-top:0">Attendance by department</h2>${bars}</div>
+    </div>
+    <div class="g2">
+      <div class="card"><h2 style="margin-top:0">14-day trend</h2><svg class="trend" viewBox="0 0 300 100" preserveAspectRatio="none" role="img" aria-label="Attendance trend"><path class="a" d="${ln}L300 100L0 100Z"/><path class="l" d="${ln}"/></svg>
+        <div class="sub" style="display:flex;justify-content:space-between"><span>${ds.slice(-14)[0]}</span><span>${Math.min(...tr).toFixed(1)}–${Math.max(...tr).toFixed(1)}%</span><span>${last}</span></div></div>
+      <div class="card"><h2 style="margin-top:0">Campus notices <span class="pill ${net.s}">● API ${net.s}</span></h2><div id="notices">${noticeHTML()}</div>${U.role==='Admin'?'<div class="f" style="margin-top:10px"><label style="flex:1">Post a notice<input id="nt" placeholder="Notice title"></label><button class="p" onclick="addNotice()">Post</button></div>':''}</div>
+    </div>
+    <div class="card tw"><h2 style="margin-top:0">Recent sessions</h2>
+      <table><tr><th>Date</th><th>Subject</th><th>Section</th><th>Absent</th><th>Excused</th><th>Attendance</th></tr>
+      ${rows||'<tr><td colspan="6">No sessions recorded yet. Mark attendance as Faculty to add one.</td></tr>'}</table>
+    </div>`;
+}
+
+// ---- REST API layer: talks to server.js (state sync + notices) ----
+const API=location.protocol==='file:'?'http://localhost:3000/api':'/api';let net={s:'connecting',notices:null},lastPush='',pt;
+async function api(path,opt={}){const c=new AbortController(),t=setTimeout(()=>c.abort(),6000);
+  try{const r=await fetch(API+path,{...opt,signal:c.signal,headers:{'Content-Type':'application/json'}});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t)}}
+function noticeHTML(){if(net.notices===null)return'<p class="sub">Loading from the server…</p>';
+  if(!net.notices.length)return'<p class="sub">Server unreachable. Check your connection; attendance still saves locally.</p>';
+  return'<ul class="news">'+net.notices.map(n=>`<li><b>${esc(n.title.charAt(0).toUpperCase()+n.title.slice(1))}</b><span class="sub">${esc(n.body||'')}</span></li>`).join('')+'</ul>'}
+function paint(){document.querySelectorAll('.pill').forEach(p=>{p.className='pill '+net.s;p.textContent='● API '+net.s});const n=document.getElementById('notices');if(n)n.innerHTML=noticeHTML()}
+async function loadNotices(){try{net.notices=await api('/notices?limit=4');net.s='online'}catch(e){net.notices=[];net.s='offline'}paint()}
+async function addNotice(){const el=document.getElementById('nt'),t=el.value.trim();if(!t)return toast('Enter a notice title.');try{await api('/notices',{method:'POST',body:JSON.stringify({title:t})});el.value='';toast('Notice posted');loadNotices()}catch(e){toast('Could not post notice: '+e.message)}}
+function pushState(now){clearTimeout(pt);const go=async()=>{const b=JSON.stringify(S);if(b===lastPush)return;try{await api('/state',{method:'PUT',body:b});lastPush=b;net.s='online';if(now)toast('Saved to server')}catch(e){net.s='offline';if(now)toast('Server unreachable. Saved locally.')}paint()};now?go():pt=setTimeout(go,500)}
+async function pullState(){try{const r=await api('/state');net.s='online';if(r.updated){S={sess:r.sess||{},reqs:r.reqs||[],audit:r.audit||[],th:r.th||75,n:r.n||0};lastPush=JSON.stringify(S);draft=null;R()}else pushState(true)}catch(e){net.s='offline'}paint()}
+function toast(t){let e=document.getElementById('toast');if(!e){e=document.createElement('div');e.id='toast';e.setAttribute('role','status');document.body.append(e)}e.textContent=t;e.className='show';clearTimeout(e._t);e._t=setTimeout(()=>e.className='',3500)}
+function theme(){const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('att.theme',r.dataset.theme)}catch(e){}}
+try{const t=localStorage.getItem('att.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}
+function post(){document.querySelectorAll('[data-n]').forEach(e=>{const to=+e.dataset.n,t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/800);e.textContent=Math.round(to*(1-Math.pow(1-k,3))).toLocaleString();if(k<1)requestAnimationFrame(f)})(t0)})}
+
+// ---- views ----
+function roster(s,edit){const ro=SO[offOf(s.o).sec.id];const sec=offOf(s.o).sec;let h='<div class="ros">';
+ for(let k=0;k<sec.n;k++){const i=sec.st+k,st=edit?(draft.abs.has(i)?'A':draft.exc.has(i)?'E':'P'):stOf(s,i);
+  h+=`<button class="ch ${st} ${!edit&&i===pick?'sel':''}" onclick="${edit?`cyc(${i})`:`pick=${i};R()`}">${st} · ${roll(i)} ${nm(i)}</button>`}return h+'</div>'}
+function cyc(i){const d=draft,st=d.abs.has(i)?'A':d.exc.has(i)?'E':'P';d.abs.delete(i);d.exc.delete(i);if(st==='P')d.abs.add(i);if(st==='A')d.exc.add(i);R()}
+function offSel(){return`<label>Class<select onchange="oid=this.value;draft=null;openKey='';pick=-1;R()">${mine().map(o=>`<option value="${o.id}" ${o.id===oid?'selected':''}>${o.sub} · ${o.sec.id}</option>`).join('')}</select></label>`}
+function vMark(){if(U.role!=='Faculty')return'<p class="sub">Only faculty can mark attendance.</p>';if(!mine().some(o=>o.id===oid))oid=mine()[0].id;
+ const o=offOf(oid),k=oid+'|'+TODAY,ex=getS(k);if(!draft||draft.k!==k){const s=ex||{abs:[],exc:[]};draft={k,abs:new Set(s.abs),exc:new Set(s.exc)}}
+ return`<div class="f">${offSel()}<span class="sub">Date: ${TODAY} (today only; earlier days go through a correction request)</span></div>
+ <p class="sub">Tap a student to cycle P (present) → A (absent) → E (excused). Everyone starts present.</p>
+ <div class="f"><button onclick="draft.abs.clear();draft.exc.clear();R()">All present</button><button class="p" onclick="if(confirm('Save today\'s attendance? This will record the current Present, Absent and Excused counts.'))act(saveMark)">${ex?'Update':'Save'} attendance</button>
+ <span class="sub">${o.sec.n-draft.abs.size-draft.exc.size} present · ${draft.abs.size} absent · ${draft.exc.size} excused${ex?' · already saved today':''}</span></div>${roster(ex||{o:oid},true)}`}
+function vHist(){if(U.role!=='Faculty')return'<p class="sub">Faculty view. HODs use Corrections and Low attendance.</p>';if(!mine().some(o=>o.id===oid))oid=mine()[0].id;
+ const rows=[...allS().values()].filter(s=>s.o===oid).sort((a,b)=>b.d.localeCompare(a.d)).map(s=>`<tr><td>${s.d}</td><td>${offOf(oid).sec.n-s.abs.length-s.exc.length}</td><td>${s.abs.length}</td><td>${s.exc.length}</td><td class="${attendancePctForSession(s)<S.th?'bad':'ok'}">${attendancePctForSession(s).toFixed(1)}%</td><td><button onclick="openKey='${oid}|${s.d}';pick=-1;R()">Open</button></td></tr>`).join('');
+ let d='';if(openKey.startsWith(oid+'|')){const s=getS(openKey);d=`<h2>${s.d} · read-only</h2><p class="sub">${s.d===TODAY?'This is today: edit it in Mark today.':'Tap a student to request a correction.'}</p>${roster(s,false)}`;
+  if(pick>=0&&s.d!==TODAY)d+=`<div class="card f" style="margin-top:10px"><span>${roll(pick)} ${nm(pick)} is <b>${stOf(s,pick)}</b>. Change to</span><label><select id="to"><option>P</option><option>A</option><option>E</option></select></label><label>Reason<input id="why" style="width:240px"></label><button class="p" onclick="act(reqCorr)">Request correction</button></div>`}
+ return`<div class="f">${offSel()}</div><div class="card tw"><table><tr><th>Date</th><th>Present</th><th>Absent</th><th>Excused</th><th>Attendance %</th><th></th></tr>${rows}</table></div>${d}`}
+function vCorr(){const rs=S.reqs.filter(r=>U.role==='Faculty'?r.by===U.fid:U.role==='HOD'?offOf(r.o).sec.d===U.dept:true).slice().reverse();
+ const rows=rs.map(r=>`<tr><td>#${r.id}</td><td>${r.ts}</td><td>${roll(r.i)} ${nm(r.i)}</td><td>${offOf(r.o).sub} ${r.key.split('|')[1]}</td><td>${r.from}→${r.to}</td><td>${esc(r.reason)}</td>
+ <td class="${r.status==='APPROVED'?'ok':r.status==='REJECTED'?'bad':'warn'}">${r.status}${r.note?' ('+esc(r.note)+')':''}</td><td>${r.status==='PENDING'&&U.role!=='Faculty'?`<button onclick="act(decide,${r.id},true)">Approve</button> <button onclick="act(decide,${r.id},false)">Reject</button>`:''}</td></tr>`).join('');
+ return`${corr_insert}${U.role!=='Faculty'?'<div class="f"><label>Decision note (required to reject)<input id="dn" style="width:280px"></label></div>':''}<div class="card tw"><table><tr><th>#</th><th>Raised</th><th>Student</th><th>Class</th><th>Change</th><th>Reason</th><th>Status</th><th></th></tr>${rows||'<tr><td colspan=8>No correction requests yet.</td></tr>'}</table></div>`}
+function vLow(){const L=low();const rows=L.slice(0,100).map(x=>`<tr><td>${roll(x.i)}</td><td>${nm(x.i)}</td><td>${x.sec}</td><td class="bad">${(x.r*100).toFixed(1)}%</td><td>${x.w[1]} ${(x.w[0]*100).toFixed(0)}%</td><td>${x.need}</td></tr>`).join('');
+ return`<div class="f"><label>Threshold %<input type="number" min="50" max="90" value="${S.th}" style="width:80px" ${U.role==='Admin'?'':'disabled'} onchange="S.th=Math.min(90,Math.max(50,+this.value||75));save();R()"></label>
+ ${U.role==='Admin'?`<label>Department<select onchange="fd=this.value;R()"><option value="">All</option>${DEPTS.map(d=>`<option ${d===fd?'selected':''}>${d}</option>`).join('')}</select></label>`:`<span class="sub">Scope: ${U.dept}</span>`}
+ <button onclick="csv()">Export all ${L.length} as CSV</button></div><p class="sub">${L.length} students below ${S.th}% overall. Showing the lowest 100. "To recover" = consecutive classes they must attend to reach the threshold.</p>
+ <div class="card tw"><table><tr><th>Roll</th><th>Name</th><th>Section</th><th>Overall</th><th>Weakest subject</th><th>To recover</th></tr>${rows}</table></div>`}
+function vStu(){let res='';const t=q.trim();
+ if(t){const m=/^s?\d+$/i.test(t)?[parseInt(t.replace(/\D/g,''))-1].filter(i=>i>=0&&i<NS):[...Array(NS).keys()].filter(i=>nm(i).toLowerCase().includes(t.toLowerCase())).slice(0,12);
+  res=m.map(i=>`<button onclick="sel=${i};R()">${roll(i)} ${nm(i)}</button> `).join('')||'<span class="sub">No match.</span>'}
+ let d='';if(sel>=0){const sec=secs[Math.floor(sel/83)];if(U.role==='HOD'&&sec.d!==U.dept)d='<p class="bad">This student belongs to another department.</p>';
+  else{const{T,A}=stats();const rows=SO[sec.id].map(o=>{const t=T[o.id]||0,a=t-((A[o.id]||{})[sel]||0),p=t?a/t*100:0;const ab=[...allS().values()].filter(s=>s.o===o.id&&s.abs.includes(sel)).map(s=>s.d).sort().reverse().slice(0,4).join(', ');
+   return`<tr><td>${o.sub}</td><td>${a}/${t}</td><td class="${p<S.th?'bad':'ok'}">${p.toFixed(1)}%</td><td>${ab||'-'}</td></tr>`}).join('');
+   d=`<div class="card profilehead"><div><h2>${roll(sel)} ${nm(sel)}</h2><span class="sub">${sec.id} · ${sec.d} Department</span></div><span class="badge">Student Profile</span></div><div class="card tw"><table><tr><th>Subject</th><th>Attended</th><th>%</th><th>Recent absences</th></tr>${rows}</table></div>`}}
+ return`<div class="f"><label>Roll no. or name<input value="${esc(q)}" oninput="q=this.value" onkeydown="if(event.key==='Enter'){sel=-1;R()}" placeholder="S0123 or Rohan"></label><button onclick="sel=-1;R()">Search</button></div>${res}${d}`}
+function vAudit(){return`<div class="card tw"><table><tr><th>Time</th><th>By</th><th>Action</th><th>Detail</th></tr>${S.audit.map(a=>`<tr><td>${a.ts}</td><td>${a.who}</td><td>${a.a}</td><td>${esc(a.d)}</td></tr>`).join('')||'<tr><td colspan=4>Nothing yet.</td></tr>'}</table></div>`}
+const TABS={dash:['Dashboard',vDash,['Faculty','HOD','Admin']],mark:['Mark today',vMark,['Faculty']],hist:['History',vHist,['Faculty']],corr:['Corrections',vCorr,['Faculty','HOD','Admin']],low:['Low attendance',vLow,['HOD','Admin']],stu:['Student lookup',vStu,['HOD','Admin']],audit:['Audit log',vAudit,['HOD','Admin']]};
+function setRole(r){U.role=r;tab=Object.keys(TABS).find(k=>TABS[k][2].includes(r));msg='';draft=null;R()}
+function R(){save();const av=Object.entries(TABS).filter(([k,v])=>v[2].includes(U.role));if(!TABS[tab][2].includes(U.role))tab=av[0][0];
+ document.getElementById('app').innerHTML=`<div class="top card"><div><h1><span class="logo">✓</span>Smart Attendance Management</h1><span class="sub">${NS.toLocaleString()} students · ${offs.length} classes · 200 faculty · ${DEPTS.length} departments</span></div>
+ <div class="f" style="margin:0"><label>Acting as<select onchange="setRole(this.value)">${['Faculty','HOD','Admin'].map(r=>`<option ${r===U.role?'selected':''}>${r}</option>`).join('')}</select></label>
+ ${U.role==='Faculty'?`<label>Faculty<select onchange="U.fid=this.value;draft=null;openKey='';R()">${[...Array(200).keys()].map(i=>'F'+pad(i+1,3)).map(f=>`<option ${f===U.fid?'selected':''}>${f}</option>`).join('')}</select></label>`:''}
+ ${U.role==='HOD'?`<label>Department<select onchange="U.dept=this.value;R()">${DEPTS.map(d=>`<option ${d===U.dept?'selected':''}>${d}</option>`).join('')}</select></label>`:''}
+ <span class="pill ${net.s}">● API ${net.s}</span><button onclick="theme()" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button><button onclick="if(confirm('Reset all changes?')){S={sess:{},reqs:[],audit:[],th:75,n:0};draft=null;R()}">Reset demo</button></div></div>
+ <nav>${av.map(([k,v])=>`<button class="${k===tab?'on':''}" onclick="tab='${k}';msg='';R()">${v[0]}</button>`).join('')}</nav>${msg?`<div class="msg" role="status">${esc(msg)}</div>`:''}${TABS[tab][1]()}`;post()}
+R();loadNotices();pullState();
+</script></body></html>
